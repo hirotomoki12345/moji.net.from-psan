@@ -1,31 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>写真文字起こしサイト</title>
+    <title>位置追跡サイト</title>
 </head>
 <body>
-  <h1>写真をアップロードして文字起こし</h1>
-  <input type="file" accept="image/*" id="imageInput" /><!DOCTYPE html>
-<html>
-<head>
-    <title>位置情報共有サイト</title>
-</head>
-<body>
-    <h1>近くのおすすめスポットを探そう！</h1>
-    <p>このサイトでは、現在の位置情報を利用して近くのおすすめスポットを見つけることができます。</p>
-    <p>位置情報を許可することで、以下のような利点があります：</p>
-    <ul>
-        <li>近くのレストランやカフェ、観光スポットのリストを自動的に表示</li>
-        <li>おすすめのイベントや特別なオファーの通知を受け取る</li>
-        <li>友達との共有用に位置情報を利用したメッセージや写真を投稿</li>
-    </ul>
-    <p>プライバシーについて心配いりますか？ご安心ください！私たちはあなたの位置情報を第三者と共有することはありません。位置情報は厳重に保管し、利用目的以外では使用しません。</p>
+    <h1>位置追跡サイト</h1>
+    <p>このサイトでは、位置追跡を利用して現在の位置情報を表示します。</p>
 
-    <!-- 位置情報の取得を促すボタン -->
-    <button onclick="getLocation()">位置情報を許可して始める</button>
+    <!-- 位置情報の表示を促すボタン -->
+    <button onclick="getLocation()">現在の位置を表示</button>
+
+    <!-- 位置情報を表示するための要素 -->
+    <div id="locationResult"></div>
 
     <script>
-        // 位置情報を取得する関数
+        // 位置情報の取得をリクエストする関数
         function getLocation() {
             if (navigator.geolocation) {
                 // 位置情報の取得をリクエスト
@@ -37,8 +26,13 @@
 
         // 位置情報の取得に成功した場合のコールバック関数
         function showPosition(position) {
-            // 取得した位置情報を利用して何か処理を行う（この例では何もしません）
-            alert("位置情報の取得に成功しました！");
+            // 取得した位置情報を利用して、緯度と経度を表示
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+
+            // 取得した位置情報をHTMLに表示
+            var locationResult = document.getElementById("locationResult");
+            locationResult.innerHTML = "現在の位置情報：<br>緯度：" + latitude + "<br>経度：" + longitude;
         }
 
         // 位置情報の取得に失敗した場合のコールバック関数
@@ -59,14 +53,5 @@
             }
         }
     </script>
-</body>
-</html>
-
-  <button onclick="startTranscription()">文字起こし</button>
-  <div id="result"></div>
-
-  <!-- Include Tesseract.js via CDN -->
-  <script src="https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.min.js"></script>
-  <script src="index.js"></script>
 </body>
 </html>
