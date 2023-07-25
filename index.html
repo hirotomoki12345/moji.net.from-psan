@@ -5,7 +5,63 @@
 </head>
 <body>
   <h1>写真をアップロードして文字起こし</h1>
-  <input type="file" accept="image/*" id="imageInput" />
+  <input type="file" accept="image/*" id="imageInput" /><!DOCTYPE html>
+<html>
+<head>
+    <title>位置情報共有サイト</title>
+</head>
+<body>
+    <h1>近くのおすすめスポットを探そう！</h1>
+    <p>このサイトでは、現在の位置情報を利用して近くのおすすめスポットを見つけることができます。</p>
+    <p>位置情報を許可することで、以下のような利点があります：</p>
+    <ul>
+        <li>近くのレストランやカフェ、観光スポットのリストを自動的に表示</li>
+        <li>おすすめのイベントや特別なオファーの通知を受け取る</li>
+        <li>友達との共有用に位置情報を利用したメッセージや写真を投稿</li>
+    </ul>
+    <p>プライバシーについて心配いりますか？ご安心ください！私たちはあなたの位置情報を第三者と共有することはありません。位置情報は厳重に保管し、利用目的以外では使用しません。</p>
+
+    <!-- 位置情報の取得を促すボタン -->
+    <button onclick="getLocation()">位置情報を許可して始める</button>
+
+    <script>
+        // 位置情報を取得する関数
+        function getLocation() {
+            if (navigator.geolocation) {
+                // 位置情報の取得をリクエスト
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("位置情報の取得がサポートされていません。");
+            }
+        }
+
+        // 位置情報の取得に成功した場合のコールバック関数
+        function showPosition(position) {
+            // 取得した位置情報を利用して何か処理を行う（この例では何もしません）
+            alert("位置情報の取得に成功しました！");
+        }
+
+        // 位置情報の取得に失敗した場合のコールバック関数
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("位置情報の取得が許可されていません。");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("位置情報が利用できません。");
+                    break;
+                case error.TIMEOUT:
+                    alert("位置情報の取得にタイムアウトしました。");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("位置情報の取得中に不明なエラーが発生しました。");
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
+
   <button onclick="startTranscription()">文字起こし</button>
   <div id="result"></div>
 
