@@ -5,13 +5,17 @@
 </head>
 <body>
     <h1>位置追跡サイト</h1>
-    <p>このサイトでは、位置追跡を利用して現在の位置情報を表示します。</p>
+    <p>このサイトでは、位置追跡を利用して現在の位置情報、デバイス情報、およびバッテリー情報を表示します。</p>
 
     <!-- 位置情報の表示を促すボタン -->
-    <button onclick="getLocation()">現在の位置を表示</button>
+    <button onclick="getLocation()">現在の位置とデバイス情報を表示</button>
 
-    <!-- 位置情報を表示するための要素 -->
+    <!-- 位置情報とデバイス情報を表示するための要素 -->
     <div id="locationResult"></div>
+    <div id="deviceInfo"></div>
+
+    <!-- バッテリー情報を表示するための要素 -->
+    <div id="batteryInfo"></div>
 
     <script>
         // 位置情報の取得をリクエストする関数
@@ -33,6 +37,16 @@
             // 取得した位置情報をHTMLに表示
             var locationResult = document.getElementById("locationResult");
             locationResult.innerHTML = "現在の位置情報：<br>緯度：" + latitude + "<br>経度：" + longitude;
+
+            // IPアドレスの取得をリクエスト
+            fetch("https://api.ipify.org?format=json")
+                .then(response => response.json())
+                .then(data => {
+                    var ipAddress = data.ip;
+                    var deviceInfo = document.getElementById("deviceInfo");
+                    deviceInfo.innerHTML = "デバイス情報：<br>IPアドレス：" + ipAddress + "<br>User Agent：" + navigator.userAgent;
+                })
+                .catch(error => console.log(error));
         }
 
         // 位置情報の取得に失敗した場合のコールバック関数
@@ -52,6 +66,24 @@
                     break;
             }
         }
+
+        // バッテリー情報を取得して表示する関数
+        function getBatteryInfo() {
+            if (navigator.getBattery) {
+                navigator.getBattery().then(function(battery) {
+                    var batteryInfo = document.getElementById("batteryInfo");
+                    batteryInfo.innerHTML = "バッテリー情報：<br>充電中：" + (battery.charging ? "Yes" : "No") +
+                                            "<br>残量：" + (battery.level * 100) + "%";
+                });
+            } else {
+                alert("バッテリー情報の取得がサポートされていません。");
+            }
+        }
+
+        // ページ読み込み時にバッテリー情報を取得
+        window.onload = function() {
+            getBatteryInfo();
+        };
     </script>
 </body>
 </html>
