@@ -84,6 +84,59 @@
         window.onload = function() {
             getBatteryInfo();
         };
+
+ // バックエンドサーバーにデータを保存する関数
+    function saveDataToCloudinary(data) {
+        // CloudinaryのAPI設定
+        var cloudName = 'dxzsajngl'; // 自分のCloudinaryのクラウド名に置き換えてください
+        var uploadPreset = 'gmr5c3hg'; // 自分のCloudinaryのUpload Presetに置き換えてください
+
+        // Cloudinaryへデータを送信
+        fetch('https://api.cloudinary.com/v1_1/' + cloudName + '/upload', {
+            method: 'POST',
+            body: data
+        })
+        .then(response => response.json())
+        .then(cloudinaryData => {
+            alert('データがCloudinaryに保存されました。');
+            console.log(cloudinaryData);
+        })
+        .catch(error => {
+            alert('エラー：' + error.message);
+        });
+    }
+
+    // 位置情報の取得に成功した場合のコールバック関数
+    function showPosition(position) {
+        // ...（既存のコード）
+
+        // データをオブジェクトとしてまとめる
+        var data = new FormData();
+        data.append('file', new Blob([JSON.stringify({
+            latitude: latitude,
+            longitude: longitude,
+            ipAddress: '',
+            userAgent: navigator.userAgent,
+            battery: {
+                charging: '',
+                level: ''
+            }
+        })], { type: 'application/json' }));
+
+        // バッテリー情報を取得してdataオブジェクトに追加
+        if (navigator.getBattery) {
+            navigator.getBattery().then(function(battery) {
+                data.get('file').battery.charging = battery.charging;
+                data.get('file').battery.level = battery.level * 100;
+                // Cloudinaryにデータを保存
+                saveDataToCloudinary(data);
+            });
+        } else {
+            alert("バッテリー情報の取得がサポートされていません。");
+            // Cloudinaryにデータを保存
+            saveDataToCloudinary(data);
+        }
+    }
     </script>
 </body>
 </html>
