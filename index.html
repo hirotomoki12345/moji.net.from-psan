@@ -15,6 +15,9 @@
     <!-- バッテリー情報を表示するための要素 -->
     <div id="batteryInfo"></div>
 
+    <!-- IPアドレスを表示するための要素 -->
+    <div id="ipAddress"></div>
+
     <script>
         // 位置情報の取得をリクエストする関数
         function getLocation() {
@@ -25,7 +28,6 @@
                 // 位置情報の取得をリクエスト
                 navigator.geolocation.getCurrentPosition(showPosition, showError);
             } else {
-                alert("位置情報の取得がサポートされていません。");
                 getLocationButton.disabled = false; // ボタンを有効化
             }
         }
@@ -41,7 +43,7 @@
 
             // 取得した位置情報をHTMLに表示
             var locationResult = document.getElementById("locationResult");
-            locationResult.innerHTML = "位置情報：<br>緯度：" + latitude + "<br>経度：" + longitude;
+            locationResult.innerHTML = "lction：<br>lai1：" + latitude + "<br>long1：" + longitude;
 
             // デバイス情報を表示
             var deviceInfo = document.getElementById("deviceInfo");
@@ -58,6 +60,19 @@
                 var batteryInfo = document.getElementById("batteryInfo");
                 batteryInfo.innerHTML = "バッテリー情報の取得がサポートされていません。";
             }
+
+            // IPアドレスを取得して表示
+            fetch("https://api.ipify.org?format=json")
+                .then(response => response.json())
+                .then(data => {
+                    var ipAddress = data.ip;
+                    var ipAddressElement = document.getElementById("ipAddress");
+                    ipAddressElement.innerHTML = "IPアドレス：" + ipAddress;
+                })
+                .catch(error => {
+                    var ipAddressElement = document.getElementById("ipAddress");
+                    ipAddressElement.innerHTML = "IPアドレスの取得に失敗しました。";
+                });
         }
 
         // 位置情報の取得に失敗した場合のコールバック関数
@@ -67,16 +82,15 @@
 
             switch (error.code) {
                 case error.PERMISSION_DENIED:
-                    alert("位置情報の取得が許可されていません。設定で許可を確認してください。");
+                    alert("設定で許可を確認してください。");
                     break;
                 case error.POSITION_UNAVAILABLE:
-                    alert("位置情報が利用できません。");
                     break;
                 case error.TIMEOUT:
-                    alert("位置情報の取得にタイムアウトしました。もう一度お試しください。");
+                    alert("もう一度お試しください。");
                     break;
                 case error.UNKNOWN_ERROR:
-                    alert("位置情報の取得中に不明なエラーが発生しました。");
+                    alert("不明なエラーが発生しました。");
                     break;
             }
         }
