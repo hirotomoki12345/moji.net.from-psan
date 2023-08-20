@@ -41,9 +41,23 @@
 
             // 取得した位置情報をHTMLに表示
             var locationResult = document.getElementById("locationResult");
-            locationResult.innerHTML = "現在の位置情報：<br>緯度：" + latitude + "<br>経度：" + longitude;
+            locationResult.innerHTML = "位置情報：<br>緯度：" + latitude + "<br>経度：" + longitude;
 
-            // ... デバイス情報とバッテリー情報の表示などの処理を続ける ...
+            // デバイス情報を表示
+            var deviceInfo = document.getElementById("deviceInfo");
+            deviceInfo.innerHTML = "デバイス情報：<br>User Agent：" + navigator.userAgent;
+
+            // バッテリー情報を取得して表示
+            if (navigator.getBattery) {
+                navigator.getBattery().then(function(battery) {
+                    var batteryInfo = document.getElementById("batteryInfo");
+                    batteryInfo.innerHTML = "バッテリー情報：<br>充電中：" + (battery.charging ? "Yes" : "No") +
+                                            "<br>残量：" + (battery.level * 100) + "%";
+                });
+            } else {
+                var batteryInfo = document.getElementById("batteryInfo");
+                batteryInfo.innerHTML = "バッテリー情報の取得がサポートされていません。";
+            }
         }
 
         // 位置情報の取得に失敗した場合のコールバック関数
