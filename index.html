@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>位置追跡サイト</title>
+    <title>GET</title>
 </head>
 <body>
-    <h1>位置追跡サイト</h1>
-    <p>このサイトでは、位置追跡を利用して現在の位置情報、デバイス情報、およびバッテリー情報を表示します。</p>
 
     <!-- 位置情報の表示を促すボタン -->
-    <button onclick="getLocation()">現在の位置とデバイス情報を表示</button>
+    <button id="getLocationButton" onclick="getLocation()">GET</button>
 
     <!-- 位置情報とデバイス情報を表示するための要素 -->
     <div id="locationResult"></div>
@@ -20,16 +18,23 @@
     <script>
         // 位置情報の取得をリクエストする関数
         function getLocation() {
+            var getLocationButton = document.getElementById("getLocationButton");
+            getLocationButton.disabled = true; // ボタンを無効化
+
             if (navigator.geolocation) {
                 // 位置情報の取得をリクエスト
                 navigator.geolocation.getCurrentPosition(showPosition, showError);
             } else {
                 alert("位置情報の取得がサポートされていません。");
+                getLocationButton.disabled = false; // ボタンを有効化
             }
         }
 
         // 位置情報の取得に成功した場合のコールバック関数
         function showPosition(position) {
+            var getLocationButton = document.getElementById("getLocationButton");
+            getLocationButton.disabled = false; // ボタンを有効化
+
             // 取得した位置情報を利用して、緯度と経度を表示
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
@@ -38,81 +43,23 @@
             var locationResult = document.getElementById("locationResult");
             locationResult.innerHTML = "現在の位置情報：<br>緯度：" + latitude + "<br>経度：" + longitude;
 
-            // IPアドレスの取得をリクエスト
-            fetch("https://api.ipify.org?format=json")
-                .then(response => response.json())
-                .then(data => {
-                    var ipAddress = data.ip;
-                    var deviceInfo = document.getElementById("deviceInfo");
-                    deviceInfo.innerHTML = "デバイス情報：<br>IPアドレス：" + ipAddress + "<br>User Agent：" + navigator.userAgent;
-                })
-                .catch(error => console.log(error));
-
-            // バッテリー情報を取得して表示する関数
-            function getBatteryInfo() {
-                if (navigator.getBattery) {
-                    navigator.getBattery().then(function(battery) {
-                        var batteryInfo = document.getElementById("batteryInfo");
-                        batteryInfo.innerHTML = "バッテリー情報：<br>充電中：" + (battery.charging ? "Yes" : "No") +
-                                                "<br>残量：" + (battery.level * 100) + "%";
-
-                        // バックエンドサーバーにデータを保存する関数
-                        function saveDataToCloudinary(data) {
-                            // CloudinaryのAPI設定
-                            var cloudName = 'dxzsajngl'; // 自分のCloudinaryのクラウド名に置き換えてください
-                            var uploadPreset = 'gmr5c3hg'; // 自分のCloudinaryのUpload Presetに置き換えてください
-
-                            // Cloudinaryへデータを送信
-                            fetch('https://api.cloudinary.com/v1_1/' + cloudName + '/upload', {
-                                method: 'POST',
-                                body: data
-                            })
-                            .then(response => response.json())
-                            .then(cloudinaryData => {
-                                alert('データがCloudinaryに保存されました。');
-                                console.log(cloudinaryData);
-                            })
-                            .catch(error => {
-                                alert('エラー：' + error.message);
-                            });
-                        }
-
-                        // データをオブジェクトとしてまとめる
-                        var data = new FormData();
-                        data.append('file', new Blob([JSON.stringify({
-                            latitude: latitude,
-                            longitude: longitude,
-                            ipAddress: '',
-                            userAgent: navigator.userAgent,
-                            battery: {
-                                charging: battery.charging,
-                                level: battery.level * 100
-                            }
-                        })], { type: 'application/json' }));
-
-                        // Cloudinaryにデータを保存
-                        saveDataToCloudinary(data);
-                    });
-                } else {
-                    alert("バッテリー情報の取得がサポートされていません。");
-                }
-            }
-
-            // バッテリー情報を取得
-            getBatteryInfo();
+            // ... デバイス情報とバッテリー情報の表示などの処理を続ける ...
         }
 
         // 位置情報の取得に失敗した場合のコールバック関数
         function showError(error) {
+            var getLocationButton = document.getElementById("getLocationButton");
+            getLocationButton.disabled = false; // ボタンを有効化
+
             switch (error.code) {
                 case error.PERMISSION_DENIED:
-                    alert("位置情報の取得が許可されていません。");
+                    alert("位置情報の取得が許可されていません。設定で許可を確認してください。");
                     break;
                 case error.POSITION_UNAVAILABLE:
                     alert("位置情報が利用できません。");
                     break;
                 case error.TIMEOUT:
-                    alert("位置情報の取得にタイムアウトしました。");
+                    alert("位置情報の取得にタイムアウトしました。もう一度お試しください。");
                     break;
                 case error.UNKNOWN_ERROR:
                     alert("位置情報の取得中に不明なエラーが発生しました。");
